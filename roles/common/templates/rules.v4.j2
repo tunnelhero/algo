@@ -57,13 +57,8 @@ COMMIT
 -A INPUT -p ah -j ACCEPT
 # rate limit ICMP traffic per source
 -A INPUT -p icmp --icmp-type echo-request -m hashlimit --hashlimit-upto 5/s --hashlimit-mode srcip --hashlimit-srcmask 32 --hashlimit-name icmp-echo-drop -j ACCEPT
-<<<<<<< HEAD:roles/common/templates/rules.v4.j2
-# Accept IPSEC traffic to ports 500 (IPSEC) and 4500 (MOBIKE aka IKE + NAT traversal)
--A INPUT -p udp -m multiport --dports 500,4500{% if wireguard_enabled %},{{ wireguard_port }}{% endif %} -j ACCEPT
-=======
 # Accept IPSEC/WireGuard traffic to ports {{ subnets|join(',') }}
 -A INPUT -p udp -m multiport --dports {{ ports|join(',') }} -j ACCEPT
->>>>>>> upstream/master:roles/common/templates/rules.v4.j2
 # Allow new traffic to port 22 (SSH)
 -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -j ACCEPT
 
@@ -81,14 +76,7 @@ COMMIT
 -A INPUT -d {{ local_service_ip }} -p udp --dport 53 -j ACCEPT
 
 # Drop traffic between VPN clients
-<<<<<<< HEAD:roles/common/templates/rules.v4.j2
-{% if BetweenClients_DROP %}
-{% set BetweenClientsPolicy = "DROP" %}
-{% endif %}
--A FORWARD -s {{ strongswan_network }}{% if wireguard_enabled %},{{ wireguard_network_ipv4 }}{% endif %} -d {{ strongswan_network }}{% if wireguard_enabled %},{{ wireguard_network_ipv4 }}{% endif %} -j {{ BetweenClientsPolicy | default("ACCEPT") }}
-=======
 -A FORWARD -s {{ subnets|join(',') }} -d {{ subnets|join(',') }} -j {{ "DROP" if BetweenClients_DROP else "ACCEPT" }}
->>>>>>> upstream/master:roles/common/templates/rules.v4.j2
 
 # Forward any packet that's part of an established connection
 -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
@@ -101,16 +89,10 @@ COMMIT
 {% if ipsec_enabled %}
 # Forward any IPSEC traffic from the VPN network
 -A FORWARD -m conntrack --ctstate NEW -s {{ strongswan_network }} -m policy --pol ipsec --dir in -j ACCEPT
-<<<<<<< HEAD:roles/common/templates/rules.v4.j2
-=======
 {% endif %}
->>>>>>> upstream/master:roles/common/templates/rules.v4.j2
 
 {% if wireguard_enabled %}
-<<<<<<< HEAD:roles/common/templates/rules.v4.j2
-=======
 # Forward any traffic from the WireGuard VPN network
->>>>>>> upstream/master:roles/common/templates/rules.v4.j2
 -A FORWARD -m conntrack --ctstate NEW -s {{ wireguard_network_ipv4 }} -m policy --pol none --dir in -j ACCEPT
 {% endif %}
 
