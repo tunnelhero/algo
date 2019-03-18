@@ -43,3 +43,4 @@
 - name: A short pause, in order to be sure the instance is ready
   pause:
     seconds: 20
+  when: cloud_instance_ip != "localhost"
