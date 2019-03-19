@@ -1,0 +1,13 @@
+---
+- name: Configure the server and install localhost
+  hosts: localhost
+  gather_facts: false
+  tags: algo
+  become: true
+
+  roles:
+    - role: common
+      tags: common
+    - role: dns_encryption
+      when: dns_encryption
+      tags: dns_encryption

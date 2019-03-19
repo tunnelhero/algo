@@ -49,21 +49,21 @@
       vars:
         index: "{{ item.0 }}"
 
-    - name: Generate QR codes
-      shell: >
-        umask 077;
-        which segno &&
-        segno --scale=5 --output={{ item.1 }}.png \
-          "{{ lookup('template', 'client.conf.j2') }}" || true
-      changed_when: false
-      with_indexed_items:  "{{ wireguard_users }}"
-      when: item.1 in users
-      vars:
-        index: "{{ item.0 }}"
-        ansible_python_interpreter: "{{ ansible_playbook_python }}"
-      args:
-        chdir: "{{ wireguard_config_path }}"
-        executable: bash
+    # - name: Generate QR codes
+    #   shell: >
+    #     umask 077;
+    #     which segno &&
+    #     segno --scale=5 --output={{ item.1 }}.png \
+    #       "{{ lookup('template', 'client.conf.j2') }}" || true
+    #   changed_when: false
+    #   with_indexed_items:  "{{ wireguard_users }}"
+    #   when: item.1 in users
+    #   vars:
+    #     index: "{{ item.0 }}"
+    #     ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    #   args:
+    #     chdir: "{{ wireguard_config_path }}"
+    #     executable: bash
     become: false
     delegate_to: localhost
 
