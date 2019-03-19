@@ -4,6 +4,8 @@
   gather_facts: false
   tags: algo
   become: true
+  vars_files:
+    - config.cfg
 
   roles:
     - role: common
