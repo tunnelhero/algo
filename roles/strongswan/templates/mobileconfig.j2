@@ -133,7 +133,7 @@
                 <integer>0</integer>
             </dict>
             <key>UserDefinedName</key>
-            <string>AlgoVPN {{ algo_server_name }} IKEv2</string>
+            <string>TunnelHeroVPN {{ item.0 }} IKEv2</string>
             <key>VPNType</key>
             <string>IKEv2</string>
         </dict>
@@ -181,11 +181,11 @@
         </dict>
     </array>
     <key>PayloadDisplayName</key>
-    <string>AlgoVPN {{ algo_server_name }} IKEv2</string>
+    <string>TunnelHeroVPN {{ item.0 }} IKEv2</string>
     <key>PayloadIdentifier</key>
     <string>donut.local.{{ 500000 | random | to_uuid | upper }}</string>
     <key>PayloadOrganization</key>
-	<string>AlgoVPN</string>
+    <string>TunnelHeroVPN</string>
     <key>PayloadRemovalDisallowed</key>
     <false/>
     <key>PayloadType</key>
