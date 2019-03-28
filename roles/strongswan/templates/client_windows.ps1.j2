@@ -2,10 +2,10 @@
 
 <#
 .SYNOPSIS
-Add or remove the Algo VPN
+Add or remove the TunnelHero VPN
 
 .DESCRIPTION
-Add or remove the Algo VPN
+Add or remove the TunnelHero VPN
 See the examples for more information
 
 .PARAMETER Add
@@ -15,13 +15,13 @@ Add the VPN to the local system
 Remove the VPN from the local system
 
 .PARAMETER GetInstalledCerts
-Retrieve Algo certs, if any, from the system certificate store
+Retrieve TunnelHero certs, if any, from the system certificate store
 
 .PARAMETER SaveCerts
-Save the Algo certs embedded in this file
+Save the TunnelHero certs embedded in this file
 
 .PARAMETER OutputDirectory
-When saving the Algo certs, save to this directory
+When saving the TunnelHero certs, save to this directory
 
 .PARAMETER Pkcs12DecryptionPassword
 The decryption password for the user's PKCS12 certificate, sometimes called the "p12 password".
@@ -35,7 +35,7 @@ Allow all users to use the VPN
 .EXAMPLE
 client_USER.ps1 -Add
 
-Adds the Algo VPN
+Adds the TunnelHero VPN
 
 .EXAMPLE
 $p12pass = Read-Host -AsSecureString; client_USER.ps1 -Add -Pkcs12DecryptionPassword $p12pass
@@ -47,12 +47,12 @@ multiple calls to client_USER.ps1, rather than having to type the PKCS12 passwor
 .EXAMPLE
 client_USER.ps1 -Remove
 
-Removes the Algo VPN if installed.
+Removes the TunnelHero VPN if installed.
 
 .EXAMPLE
 client_USER.ps1 -GetIntalledCerts
 
-Show the Algo VPN's installed certificates, if any.
+Show the TunnelHero VPN's installed certificates, if any.
 
 .EXAMPLE
 client_USER.ps1 -SaveCerts -OutputDirectory $Home\Downloads
@@ -85,7 +85,7 @@ Save the embedded CA cert and encrypted user PKCS12 file.
 $ErrorActionPreference = "Stop"
 
 $VpnServerAddress = "{{ IP_subject_alt_name }}"
-$VpnName = "AlgoVPN {{ algo_server_name }} IKEv2"
+$VpnName = "TunnelHeroVPN {{ algo_server_name }} IKEv2"
 $VpnUser = "{{ item.0 }}"
 $CaCertificateBase64 = "{{ PayloadContentCA }}"
 $UserPkcs12Base64 = "{{ item.1.stdout }}"
@@ -109,9 +109,9 @@ function New-TemporaryDirectory {
 
 <#
 .SYNOPSIS
-Retrieve any installed Algo VPN certificates
+Retrieve any installed TunnelHero VPN certificates
 #>
-function Get-InstalledAlgoVpnCertificates {
+function Get-InstalledTunnelHeroVpnCertificates {
     [CmdletBinding()] Param()
     Get-ChildItem -LiteralPath Cert:\LocalMachine\Root |
         Where-Object {
@@ -123,7 +123,7 @@ function Get-InstalledAlgoVpnCertificates {
         }
 }
 
-function Save-AlgoVpnCertificates {
+function Save-TunnelHeroVpnCertificates {
     [CmdletBinding()] Param(
         [String] $OutputDirectory = $PWD
     )
@@ -142,13 +142,13 @@ function Save-AlgoVpnCertificates {
     }
 }
 
-function Add-AlgoVPN {
+function Add-TunnelHeroVPN {
     [Cmdletbinding()] Param()
 
     $workDir = New-TemporaryDirectory
 
     try {
-        $certs = Save-AlgoVpnCertificates -OutputDirectory $workDir
+        $certs = Save-TunnelHeroVpnCertificates -OutputDirectory $workDir
         $importPfxCertParams = @{
             Password = $Pkcs12DecryptionPassword
             FilePath = $certs.UserPkcs12
@@ -187,18 +187,18 @@ function Add-AlgoVPN {
     Set-VpnConnectionIPsecConfiguration @setVpnParams
 }
 
-function Remove-AlgoVPN {
+function Remove-TunnelHeroVPN {
     [CmdletBinding()] Param()
-    Get-InstalledAlgoVpnCertificates | Remove-Item -Force
+    Get-InstalledTunnelHeroVpnCertificates | Remove-Item -Force
     Remove-VpnConnection -Name $VpnName -Force
 }
 
 switch ($PsCmdlet.ParameterSetName) {
-    "Add" { Add-AlgoVPN }
-    "Remove" { Remove-AlgoVPN }
-    "GetInstalledCerts" { Get-InstalledAlgoVpnCertificates }
+    "Add" { Add-TunnelHeroVPN }
+    "Remove" { Remove-TunnelHeroVPN }
+    "GetInstalledCerts" { Get-InstalledTunnelHeroVpnCertificates }
     "SaveCerts" {
-        $certs = Save-AlgoVpnCertificates -OutputDirectory $OutputDirectory
+        $certs = Save-TunnelHeroVpnCertificates -OutputDirectory $OutputDirectory
         Get-Item -LiteralPath $certs.UserPkcs12, $certs.CaPem
     }
     default { throw "Unknown parameter set: '$($PsCmdlet.ParameterSetName)'" }
