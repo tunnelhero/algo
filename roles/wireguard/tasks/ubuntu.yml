@@ -11,7 +11,7 @@
 - name: WireGuard installed
   apt:
     name: wireguard
-    state: present
+    state: latest
     update_cache: true
 
 - name: WireGuard reload-module-on-update
